@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
-# 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
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -40,9 +39,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_filters',
     'refer',
-    'borb_test',
-    'filter_test',
-    'firebasetest',
     'rest_framework',
     'first',
     'django.contrib.admin',

@@ -24,9 +24,9 @@ from .views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('first/', include('first.urls')),
-    path('fire/', include('firebasetest.urls')),
-    path('filter/', include('filter_test.urls')),
-    path('test/', include('borb_test.urls')),
+    # path('fire/', include('firebasetest.urls')),
+    # path('filter/', include('filter_test.urls')),
+    # path('test/', include('borb_test.urls')),
     path('refer/', include('refer.urls')),
     # path('ca/', include('CA.urls')),
     # path('<str:ref_code>/', PRSignupView, name='PRSIGNUPVIEW'),
