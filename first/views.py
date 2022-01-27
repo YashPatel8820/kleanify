@@ -396,317 +396,317 @@ class Mfilter(generics.ListAPIView):
             
 
 
-class Tallyview(APIView):
-    serializer_class = AlagSerializer
-    def get(self, request):
-        queryset = Tally.objects.all()
-        print(queryset)
-        serializer = tallySerializer(queryset, many = True)
-        return Response(serializer.data)
+# class Tallyview(APIView):
+#     serializer_class = AlagSerializer
+#     def get(self, request):
+#         queryset = Tally.objects.all()
+#         print(queryset)
+#         serializer = tallySerializer(queryset, many = True)
+#         return Response(serializer.data)
 
-    def post(self,  request):
+#     def post(self,  request):
         
-        serializer = self.serializer_class(data = request.data)
-        serializer.is_valid()
-        serializer.save()
-        value=serializer.data['file']
-        value1 = str(settings.BASE_DIR)+value
-        print(value1)
+#         serializer = self.serializer_class(data = request.data)
+#         serializer.is_valid()
+#         serializer.save()
+#         value=serializer.data['file']
+#         value1 = str(settings.BASE_DIR)+value
+#         print(value1)
 
 
-        images = convert_from_path(value1, dpi = 250)
-        for i in range(len(images)):
-            # Save pages as images in the pdf
-            images[i].save('khanak.jpg', 'JPEG')
+#         images = convert_from_path(value1, dpi = 250)
+#         for i in range(len(images)):
+#             # Save pages as images in the pdf
+#             images[i].save('khanak.jpg', 'JPEG')
 
 
-        img_for_box_extraction_path='khanak.jpg'
-        img = cv2.imread(img_for_box_extraction_path, 0)
-        # Thresholding the image
-        (thresh, img_bin) = cv2.threshold(img, 128, 255,cv2.THRESH_BINARY|     
-        cv2.THRESH_OTSU)
-        # Invert the image
-        img_bin = ~img_bin
-        cv2.imwrite("Image_bin.jpg",img_bin)
-        bw = cv2.adaptiveThreshold(img_bin, 255, cv2.ADAPTIVE_THRESH_MEAN_C, \
-                                    cv2.THRESH_BINARY, 15, -2)
-        horizontal = np.copy(bw)
-        vertical = np.copy(bw)
-        # Defining a kernel length for horizontal and vertical 
-        cols = horizontal.shape[1]
-        horizontal_size = int(cols)
-        horizontalStructure = cv2.getStructuringElement(cv2.MORPH_RECT, 
-        (horizontal_size, 1))
-        # Apply morphology operations
-        horizontal = cv2.erode(horizontal, horizontalStructure)
-        horizontal = cv2.dilate(horizontal, horizontalStructure)
-        rows = vertical.shape[0]
-        verticalsize = int(rows)
-        # Create structure element for extracting verticaimg_for_box_extraction_path='ttt0.png'
-        img = cv2.imread(img_for_box_extraction_path, 0)
-        # Thresholding the image
-        (thresh, img_bin) = cv2.threshold(img, 128, 255,cv2.THRESH_BINARY|     
-        cv2.THRESH_OTSU)
-        # Invert the image
-        img_bin = ~img_bin
-        cv2.imwrite("Image_bin.jpg",img_bin)
-        bw = cv2.adaptiveThreshold(img_bin, 255, cv2.ADAPTIVE_THRESH_MEAN_C, \
-                                    cv2.THRESH_BINARY, 15, -2)
-        horizontal = np.copy(bw)
-        vertical = np.copy(bw)
-        # Defining a kernel length for horizontal and vertical 
-        cols = horizontal.shape[1]
-        horizontal_size = int(cols)
-        horizontalStructure = cv2.getStructuringElement(cv2.MORPH_RECT, 
-        (horizontal_size, 1))
-        # Apply morphology operations
-        horizontal = cv2.erode(horizontal, horizontalStructure)
-        horizontal = cv2.dilate(horizontal, horizontalStructure)
-        rows = vertical.shape[0]
-        verticalsize = int(rows)
-        # Create structure element for extracting vertical lines through morphology 
-        # operations
-        verticalStructure = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 
-        verticalsize))
-        # Apply morphology operations
-        vertical = cv2.erode(vertical, verticalStructure)
-        vertical = cv2.dilate(vertical, verticalStructure)
-        #kernel_length = np.array(img).shape[1]//80
-        #kernel_length = 7
-        # A verticle kernel of (1 X kernel_length =6), which will detect all the 
-        # verticle lines from the image.
-        verticle_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 7))
-        # A horizontal kernel of (kernel_length=7 X 1), which will help to detect 
-        # all the horizontal line from the image.
-        hori_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 1))
-        # A kernel of (3 X 3) ones.
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-        # Morphological operation to detect vertical lines from an image
-        img_temp1 = cv2.erode(img_bin, verticle_kernel, iterations=6)
-        verticle_lines_img = cv2.dilate(img_temp1, verticle_kernel, iterations=6)
-        cv2.imwrite("verticle_lines.jpg",verticle_lines_img)
-        # Morphological operation to detect horizontal lines from an image
-        img_temp2 = cv2.erode(img_bin, hori_kernel, iterations=4)
-        horizontal_lines_img = cv2.dilate(img_temp2, hori_kernel, iterations=4)
-        cv2.imwrite("horizontal_lines.jpg",verticle_lines_img)
-        res = verticle_lines_img + horizontal_lines_img
-        #fin = cv2.bitwise_and(img_bin, img_bin, mask = cv2.bitwise_not(res))
-        exp = img_bin - res
-        exp = ~exp
-        cv2.imwrite("final.jpg",exp)
-        vertical = cv2.dilate(vertical, verticalStructure)
-        #kernel_length = np.array(img).shape[1]//80
-        #kernel_length = 7
-        # A verticle kernel of (1 X kernel_length =6), which will detect all the 
-        # verticle lines from the image.
-        verticle_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 7))
-        # A horizontal kernel of (kernel_length=7 X 1), which will help to detect 
-        # all the horizontal line from the image.
-        hori_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 1))
-        # A kernel of (3 X 3) ones.
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-        # Morphological operation to detect vertical lines from an image
-        img_temp1 = cv2.erode(img_bin, verticle_kernel, iterations=6)
-        verticle_lines_img = cv2.dilate(img_temp1, verticle_kernel, iterations=6)
-        cv2.imwrite("verticle_lines.jpg",verticle_lines_img)
-        # Morphological operation to detect horizontal lines from an image
-        img_temp2 = cv2.erode(img_bin, hori_kernel, iterations=4)
-        horizontal_lines_img = cv2.dilate(img_temp2, hori_kernel, iterations=4)
-        cv2.imwrite("horizontal_lines.jpg",verticle_lines_img)
-        res = verticle_lines_img + horizontal_lines_img
-        #fin = cv2.bitwise_and(img_bin, img_bin, mask = cv2.bitwise_not(res))
-        exp = img_bin - res
-        exp = ~exp
-        cv2.imwrite("khanakfinal.jpg",exp)
+#         img_for_box_extraction_path='khanak.jpg'
+#         img = cv2.imread(img_for_box_extraction_path, 0)
+#         # Thresholding the image
+#         (thresh, img_bin) = cv2.threshold(img, 128, 255,cv2.THRESH_BINARY|     
+#         cv2.THRESH_OTSU)
+#         # Invert the image
+#         img_bin = ~img_bin
+#         cv2.imwrite("Image_bin.jpg",img_bin)
+#         bw = cv2.adaptiveThreshold(img_bin, 255, cv2.ADAPTIVE_THRESH_MEAN_C, \
+#                                     cv2.THRESH_BINARY, 15, -2)
+#         horizontal = np.copy(bw)
+#         vertical = np.copy(bw)
+#         # Defining a kernel length for horizontal and vertical 
+#         cols = horizontal.shape[1]
+#         horizontal_size = int(cols)
+#         horizontalStructure = cv2.getStructuringElement(cv2.MORPH_RECT, 
+#         (horizontal_size, 1))
+#         # Apply morphology operations
+#         horizontal = cv2.erode(horizontal, horizontalStructure)
+#         horizontal = cv2.dilate(horizontal, horizontalStructure)
+#         rows = vertical.shape[0]
+#         verticalsize = int(rows)
+#         # Create structure element for extracting verticaimg_for_box_extraction_path='ttt0.png'
+#         img = cv2.imread(img_for_box_extraction_path, 0)
+#         # Thresholding the image
+#         (thresh, img_bin) = cv2.threshold(img, 128, 255,cv2.THRESH_BINARY|     
+#         cv2.THRESH_OTSU)
+#         # Invert the image
+#         img_bin = ~img_bin
+#         cv2.imwrite("Image_bin.jpg",img_bin)
+#         bw = cv2.adaptiveThreshold(img_bin, 255, cv2.ADAPTIVE_THRESH_MEAN_C, \
+#                                     cv2.THRESH_BINARY, 15, -2)
+#         horizontal = np.copy(bw)
+#         vertical = np.copy(bw)
+#         # Defining a kernel length for horizontal and vertical 
+#         cols = horizontal.shape[1]
+#         horizontal_size = int(cols)
+#         horizontalStructure = cv2.getStructuringElement(cv2.MORPH_RECT, 
+#         (horizontal_size, 1))
+#         # Apply morphology operations
+#         horizontal = cv2.erode(horizontal, horizontalStructure)
+#         horizontal = cv2.dilate(horizontal, horizontalStructure)
+#         rows = vertical.shape[0]
+#         verticalsize = int(rows)
+#         # Create structure element for extracting vertical lines through morphology 
+#         # operations
+#         verticalStructure = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 
+#         verticalsize))
+#         # Apply morphology operations
+#         vertical = cv2.erode(vertical, verticalStructure)
+#         vertical = cv2.dilate(vertical, verticalStructure)
+#         #kernel_length = np.array(img).shape[1]//80
+#         #kernel_length = 7
+#         # A verticle kernel of (1 X kernel_length =6), which will detect all the 
+#         # verticle lines from the image.
+#         verticle_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 7))
+#         # A horizontal kernel of (kernel_length=7 X 1), which will help to detect 
+#         # all the horizontal line from the image.
+#         hori_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 1))
+#         # A kernel of (3 X 3) ones.
+#         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+#         # Morphological operation to detect vertical lines from an image
+#         img_temp1 = cv2.erode(img_bin, verticle_kernel, iterations=6)
+#         verticle_lines_img = cv2.dilate(img_temp1, verticle_kernel, iterations=6)
+#         cv2.imwrite("verticle_lines.jpg",verticle_lines_img)
+#         # Morphological operation to detect horizontal lines from an image
+#         img_temp2 = cv2.erode(img_bin, hori_kernel, iterations=4)
+#         horizontal_lines_img = cv2.dilate(img_temp2, hori_kernel, iterations=4)
+#         cv2.imwrite("horizontal_lines.jpg",verticle_lines_img)
+#         res = verticle_lines_img + horizontal_lines_img
+#         #fin = cv2.bitwise_and(img_bin, img_bin, mask = cv2.bitwise_not(res))
+#         exp = img_bin - res
+#         exp = ~exp
+#         cv2.imwrite("final.jpg",exp)
+#         vertical = cv2.dilate(vertical, verticalStructure)
+#         #kernel_length = np.array(img).shape[1]//80
+#         #kernel_length = 7
+#         # A verticle kernel of (1 X kernel_length =6), which will detect all the 
+#         # verticle lines from the image.
+#         verticle_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, 7))
+#         # A horizontal kernel of (kernel_length=7 X 1), which will help to detect 
+#         # all the horizontal line from the image.
+#         hori_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 1))
+#         # A kernel of (3 X 3) ones.
+#         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+#         # Morphological operation to detect vertical lines from an image
+#         img_temp1 = cv2.erode(img_bin, verticle_kernel, iterations=6)
+#         verticle_lines_img = cv2.dilate(img_temp1, verticle_kernel, iterations=6)
+#         cv2.imwrite("verticle_lines.jpg",verticle_lines_img)
+#         # Morphological operation to detect horizontal lines from an image
+#         img_temp2 = cv2.erode(img_bin, hori_kernel, iterations=4)
+#         horizontal_lines_img = cv2.dilate(img_temp2, hori_kernel, iterations=4)
+#         cv2.imwrite("horizontal_lines.jpg",verticle_lines_img)
+#         res = verticle_lines_img + horizontal_lines_img
+#         #fin = cv2.bitwise_and(img_bin, img_bin, mask = cv2.bitwise_not(res))
+#         exp = img_bin - res
+#         exp = ~exp
+#         cv2.imwrite("khanakfinal.jpg",exp)
 
 
-        image1 = Image.open('khanakfinal.jpg')
-        im1 = image1.convert('RGB')
-        im1.save(r'khanakdifferent.pdf')
+#         image1 = Image.open('khanakfinal.jpg')
+#         im1 = image1.convert('RGB')
+#         im1.save(r'khanakdifferent.pdf')
 
 
-        def ocr(file_path, save_path):
-            ocrmypdf.ocr(file_path, save_path,skip_text=True)
-        ocr('khanakdifferent.pdf','khanakfinal22.pdf')
-        l: RegularExpressionTextExtraction = RegularExpressionTextExtraction("Buyer")
-        m: RegularExpressionTextExtraction = RegularExpressionTextExtraction("Invoice No.")
-        n: RegularExpressionTextExtraction = RegularExpressionTextExtraction("Dated")
-        u: RegularExpressionTextExtraction = RegularExpressionTextExtraction("SGST")
-        f: RegularExpressionTextExtraction = RegularExpressionTextExtraction("CGST")
-        rup: RegularExpressionTextExtraction = RegularExpressionTextExtraction("Total")
-        main_dict = {}
-        legderlist=['DIGITAL DOCUMENTATION SYSTEMS','Neel Industries','Digital Documentation Systems Pvt Ltd','Neel Enterprise', 'Dharmendar Systems', 'Digital']
-        main_file=open("khanakfinal22.pdf", "rb")
-        try:
-            if l:
-                d = PDF.loads(main_file, [l])
-                assert d is not None
-                matches: typing.List[PDFMatch] = l.get_matches_for_page(0)
-                assert len(matches) >= 0
-                data=matches[0].get_bounding_boxes()[0]
-                r: Rectangle = Rectangle(data.get_x() - Decimal(10),
-                                            data.get_y() - Decimal(65),
-                                            Decimal(600),
-                                            Decimal(40))
-                l0: LocationFilter = LocationFilter(r)
-                l1: SimpleTextExtraction = SimpleTextExtraction()
-                l0.add_listener(l1)
-                d = PDF.loads(main_file, [l0])
-                assert d is not None
-                y=l1.get_text_for_page(0)
-                print(y)
-                score = []
-                for i in (legderlist):
-                    my_seq = SequenceMatcher(a=i,b=y)
-                    score.append(my_seq.ratio())
-                    print(my_seq.ratio())        
-                dif=score.index(max(score))
-                print(legderlist[dif],'index=',dif)
-                new = legderlist[dif]
-            main_dict['Buyer Data']=new.replace('Buyer' , '')
-            print(main_dict)
-        except:
-            pass
-        try:
-            if m:
-                d = PDF.loads(main_file, [m])
-                assert d is not None
-                matches: typing.List[PDFMatch] = m.get_matches_for_page(0)
-                assert len(matches) >= 0
-                data=matches[0].get_bounding_boxes()[0]
-                r: Rectangle = Rectangle(data.get_x() - Decimal(10),
-                                        data.get_y() - Decimal(45),
-                                        Decimal(200),
-                                        Decimal(50))
-                l0: LocationFilter = LocationFilter(r)
-                l1: SimpleTextExtraction = SimpleTextExtraction()
-                l0.add_listener(l1)
+#         def ocr(file_path, save_path):
+#             ocrmypdf.ocr(file_path, save_path,skip_text=True)
+#         ocr('khanakdifferent.pdf','khanakfinal22.pdf')
+#         l: RegularExpressionTextExtraction = RegularExpressionTextExtraction("Buyer")
+#         m: RegularExpressionTextExtraction = RegularExpressionTextExtraction("Invoice No.")
+#         n: RegularExpressionTextExtraction = RegularExpressionTextExtraction("Dated")
+#         u: RegularExpressionTextExtraction = RegularExpressionTextExtraction("SGST")
+#         f: RegularExpressionTextExtraction = RegularExpressionTextExtraction("CGST")
+#         rup: RegularExpressionTextExtraction = RegularExpressionTextExtraction("Total")
+#         main_dict = {}
+#         legderlist=['DIGITAL DOCUMENTATION SYSTEMS','Neel Industries','Digital Documentation Systems Pvt Ltd','Neel Enterprise', 'Dharmendar Systems', 'Digital']
+#         main_file=open("khanakfinal22.pdf", "rb")
+#         try:
+#             if l:
+#                 d = PDF.loads(main_file, [l])
+#                 assert d is not None
+#                 matches: typing.List[PDFMatch] = l.get_matches_for_page(0)
+#                 assert len(matches) >= 0
+#                 data=matches[0].get_bounding_boxes()[0]
+#                 r: Rectangle = Rectangle(data.get_x() - Decimal(10),
+#                                             data.get_y() - Decimal(65),
+#                                             Decimal(600),
+#                                             Decimal(40))
+#                 l0: LocationFilter = LocationFilter(r)
+#                 l1: SimpleTextExtraction = SimpleTextExtraction()
+#                 l0.add_listener(l1)
+#                 d = PDF.loads(main_file, [l0])
+#                 assert d is not None
+#                 y=l1.get_text_for_page(0)
+#                 print(y)
+#                 score = []
+#                 for i in (legderlist):
+#                     my_seq = SequenceMatcher(a=i,b=y)
+#                     score.append(my_seq.ratio())
+#                     print(my_seq.ratio())        
+#                 dif=score.index(max(score))
+#                 print(legderlist[dif],'index=',dif)
+#                 new = legderlist[dif]
+#             main_dict['Buyer Data']=new.replace('Buyer' , '')
+#             print(main_dict)
+#         except:
+#             pass
+#         try:
+#             if m:
+#                 d = PDF.loads(main_file, [m])
+#                 assert d is not None
+#                 matches: typing.List[PDFMatch] = m.get_matches_for_page(0)
+#                 assert len(matches) >= 0
+#                 data=matches[0].get_bounding_boxes()[0]
+#                 r: Rectangle = Rectangle(data.get_x() - Decimal(10),
+#                                         data.get_y() - Decimal(45),
+#                                         Decimal(200),
+#                                         Decimal(50))
+#                 l0: LocationFilter = LocationFilter(r)
+#                 l1: SimpleTextExtraction = SimpleTextExtraction()
+#                 l0.add_listener(l1)
 
-                d = PDF.loads(main_file, [l0])
-                assert d is not None
-                y=l1.get_text_for_page(0)
-            main_dict['Invoice Number']=y.replace('Invoice No.' , '')
-            print(main_dict)
-        except:
-            pass
-        try:
-            if n:
-                d = PDF.loads(main_file, [n])
-                assert d is not None
-                matches: typing.List[PDFMatch] = n.get_matches_for_page(0)
-                assert len(matches) >= 0
-                data=matches[0].get_bounding_boxes()[0]
-                r: Rectangle = Rectangle(data.get_x() - Decimal(10),
-                                        data.get_y() - Decimal(70),
-                                        Decimal(1200),
-                                        Decimal(50))
-                l0: LocationFilter = LocationFilter(r)
-                l1: SimpleTextExtraction = SimpleTextExtraction()
-                l0.add_listener(l1)
+#                 d = PDF.loads(main_file, [l0])
+#                 assert d is not None
+#                 y=l1.get_text_for_page(0)
+#             main_dict['Invoice Number']=y.replace('Invoice No.' , '')
+#             print(main_dict)
+#         except:
+#             pass
+#         try:
+#             if n:
+#                 d = PDF.loads(main_file, [n])
+#                 assert d is not None
+#                 matches: typing.List[PDFMatch] = n.get_matches_for_page(0)
+#                 assert len(matches) >= 0
+#                 data=matches[0].get_bounding_boxes()[0]
+#                 r: Rectangle = Rectangle(data.get_x() - Decimal(10),
+#                                         data.get_y() - Decimal(70),
+#                                         Decimal(1200),
+#                                         Decimal(50))
+#                 l0: LocationFilter = LocationFilter(r)
+#                 l1: SimpleTextExtraction = SimpleTextExtraction()
+#                 l0.add_listener(l1)
 
-                d = PDF.loads(main_file, [l0])
+#                 d = PDF.loads(main_file, [l0])
 
-                assert d is not None
+#                 assert d is not None
                 
-                z=l1.get_text_for_page(0)
-                print(z)
-            main_dict['Dated']=z.replace('Dated\n', '')
-            print(main_dict)
-        except:
-            pass
-        try:
-            if u:
-                d = PDF.loads(main_file, [u])
-                assert d is not None
-                matches: typing.List[PDFMatch] = u.get_matches_for_page(0)
-                assert len(matches) >= 0
-                data=matches[0].get_bounding_boxes()[0]
-                r: Rectangle = Rectangle(data.get_x() - Decimal(10),
-                                    data.get_y() - Decimal(30),
-                                    Decimal(1200),
-                                    Decimal(50))
-                l0: LocationFilter = LocationFilter(r)
-                l1: SimpleTextExtraction = SimpleTextExtraction()
-                l0.add_listener(l1)
+#                 z=l1.get_text_for_page(0)
+#                 print(z)
+#             main_dict['Dated']=z.replace('Dated\n', '')
+#             print(main_dict)
+#         except:
+#             pass
+#         try:
+#             if u:
+#                 d = PDF.loads(main_file, [u])
+#                 assert d is not None
+#                 matches: typing.List[PDFMatch] = u.get_matches_for_page(0)
+#                 assert len(matches) >= 0
+#                 data=matches[0].get_bounding_boxes()[0]
+#                 r: Rectangle = Rectangle(data.get_x() - Decimal(10),
+#                                     data.get_y() - Decimal(30),
+#                                     Decimal(1200),
+#                                     Decimal(50))
+#                 l0: LocationFilter = LocationFilter(r)
+#                 l1: SimpleTextExtraction = SimpleTextExtraction()
+#                 l0.add_listener(l1)
 
-                d = PDF.loads(main_file, [l0])
+#                 d = PDF.loads(main_file, [l0])
 
-                assert d is not None
-            r = l1.get_text_for_page(0) 
-            main_dict['SGST']=r.replace('SGST' , '')
+#                 assert d is not None
+#             r = l1.get_text_for_page(0) 
+#             main_dict['SGST']=r.replace('SGST' , '')
 
-        except:
-            pass
-        try:
-            if f:
-                d = PDF.loads(main_file, [f])
-                assert d is not None
-                matches: typing.List[PDFMatch] = f.get_matches_for_page(0)
-                assert len(matches) >= 0
-                data=matches[0].get_bounding_boxes()[0]
-                r: Rectangle = Rectangle(data.get_x() - Decimal(10),
-                                    data.get_y() - Decimal(30),
-                                    Decimal(1200),
-                                    Decimal(50))
-                l0: LocationFilter = LocationFilter(r)
-                l1: SimpleTextExtraction = SimpleTextExtraction()
-                l0.add_listener(l1)
+#         except:
+#             pass
+#         try:
+#             if f:
+#                 d = PDF.loads(main_file, [f])
+#                 assert d is not None
+#                 matches: typing.List[PDFMatch] = f.get_matches_for_page(0)
+#                 assert len(matches) >= 0
+#                 data=matches[0].get_bounding_boxes()[0]
+#                 r: Rectangle = Rectangle(data.get_x() - Decimal(10),
+#                                     data.get_y() - Decimal(30),
+#                                     Decimal(1200),
+#                                     Decimal(50))
+#                 l0: LocationFilter = LocationFilter(r)
+#                 l1: SimpleTextExtraction = SimpleTextExtraction()
+#                 l0.add_listener(l1)
 
-                d = PDF.loads(main_file, [l0])
+#                 d = PDF.loads(main_file, [l0])
 
-                assert d is not None
-            r = l1.get_text_for_page(0)     
-            main_dict['CGST']=r.replace('CGST' , '')
+#                 assert d is not None
+#             r = l1.get_text_for_page(0)     
+#             main_dict['CGST']=r.replace('CGST' , '')
 
-        except:
-            pass
-        try:
-            if rup:
-                d = PDF.loads(main_file, [rup])
-                assert d is not None
-                matches: typing.List[PDFMatch] = rup.get_matches_for_page(0)
-                assert len(matches) >= 0
-                data=matches[0].get_bounding_boxes()[0]
-                r: Rectangle = Rectangle(data.get_x() - Decimal(-700),
-                                data.get_y() - Decimal(30),
-                                Decimal(400),
-                                Decimal(50))
-                l0: LocationFilter = LocationFilter(r)
-                l1: SimpleTextExtraction = SimpleTextExtraction()
-                l0.add_listener(l1)
+#         except:
+#             pass
+#         try:
+#             if rup:
+#                 d = PDF.loads(main_file, [rup])
+#                 assert d is not None
+#                 matches: typing.List[PDFMatch] = rup.get_matches_for_page(0)
+#                 assert len(matches) >= 0
+#                 data=matches[0].get_bounding_boxes()[0]
+#                 r: Rectangle = Rectangle(data.get_x() - Decimal(-700),
+#                                 data.get_y() - Decimal(30),
+#                                 Decimal(400),
+#                                 Decimal(50))
+#                 l0: LocationFilter = LocationFilter(r)
+#                 l1: SimpleTextExtraction = SimpleTextExtraction()
+#                 l0.add_listener(l1)
 
-                d = PDF.loads(main_file, [l0])
+#                 d = PDF.loads(main_file, [l0])
 
-                assert d is not None
-                y=l1.get_text_for_page(0)
-                print(y)
-                nnn = y.replace('= ', '')
-            main_dict['Total']=nnn.replace('z', '')
-        except:
-            pass
-        inv=Tally.objects.latest('id')
-        inv.Buyer_data= main_dict.get('Buyer Data','')
-        inv.In=main_dict.get('Invoice Number','')
+#                 assert d is not None
+#                 y=l1.get_text_for_page(0)
+#                 print(y)
+#                 nnn = y.replace('= ', '')
+#             main_dict['Total']=nnn.replace('z', '')
+#         except:
+#             pass
+#         inv=Tally.objects.latest('id')
+#         inv.Buyer_data= main_dict.get('Buyer Data','')
+#         inv.In=main_dict.get('Invoice Number','')
       
 
-        date_list=['%d-%m-%y','%d-%m-%Y','%d/%m/%y','%d/%m/%Y','%d-%b-%Y','%d-%B-%Y','%d-%b-%y','%d-%B-%y','%d/%b/%Y','%d/%B/%Y','%d/%b/%y','%d/%B/%y','%d %b %Y','%d.%m.%Y']
+#         date_list=['%d-%m-%y','%d-%m-%Y','%d/%m/%y','%d/%m/%Y','%d-%b-%Y','%d-%B-%Y','%d-%b-%y','%d-%B-%y','%d/%b/%Y','%d/%B/%Y','%d/%b/%y','%d/%B/%y','%d %b %Y','%d.%m.%Y']
         
-        for i in date_list:
-            try:
-                main_date=datetime.datetime.strptime(main_dict['Dated'], i).date()
-                inv.date = main_date
-            except:
-                pass
-        print(main_dict)
-        inv.S = main_dict.get('SGST', '')
-        inv.C =main_dict.get('CGST', '')
-        inv.T = main_dict.get('Total', '')        
-        inv.save()
+#         for i in date_list:
+#             try:
+#                 main_date=datetime.datetime.strptime(main_dict['Dated'], i).date()
+#                 inv.date = main_date
+#             except:
+#                 pass
+#         print(main_dict)
+#         inv.S = main_dict.get('SGST', '')
+#         inv.C =main_dict.get('CGST', '')
+#         inv.T = main_dict.get('Total', '')        
+#         inv.save()
 
         
 
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)                
+#         return Response(serializer.data, status=status.HTTP_201_CREATED)                
                 
             
 class CorsMiddleware(object):

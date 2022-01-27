@@ -13,7 +13,7 @@ urlpatterns = [
     path('p1/<int:id>/', Put.as_view()),
     path('s1/', savecsv),
     path('fil/', Mfilter.as_view()),
-    path('t1/', Tallyview.as_view()), 
+    # path('t1/', Tallyview.as_view()), 
 
 
 
