@@ -24,9 +24,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SECRET_KEY = '1#s)6@xsd!uy^(iakv!+(adlv1zekjl(-$6#wtmae9%*88w^*4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['kleanify.herokuapp.com/', '127.0.0.1']
 
 
 # Application definition
