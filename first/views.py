@@ -15,7 +15,6 @@ from PIL import Image
 import ocrmypdf 
 import datetime
 import netifaces
-import cv2
 import numpy as np
 
 
