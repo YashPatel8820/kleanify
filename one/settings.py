@@ -14,6 +14,7 @@ import os
 
 # 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
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MEDIA_URL = '/media/'
