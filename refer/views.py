@@ -57,7 +57,7 @@ def signup_view(request,*args, **kwargs):
         try:
             fin = requests.get("https://api6.ipify.org", timeout=5).text
             xyz.ip = fin
-            xyz.save()
+            xyz.update()
         except requests.exceptions.ConnectionError as ex:
             print(None)
 
