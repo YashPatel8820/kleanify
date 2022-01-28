@@ -53,13 +53,10 @@ def signup_view(request,*args, **kwargs):
                 m.identify = None
             m.save()
 
-        xyz = Profile.objects.latest('id')
-        try:
-            fin = requests.get("https://api6.ipify.org", timeout=5).text
-            xyz.ip = fin
-            xyz.update()
-        except requests.exceptions.ConnectionError as ex:
-            print(None)
+        fin = requests.get("https://api6.ipify.org", timeout=5).text
+        xyz = Profile.objects.update(ip=fin)
+           
+        
 
         # xyz = Profile.objects.latest('id')
         # print(xyz)
