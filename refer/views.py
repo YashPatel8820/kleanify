@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from django.conf import settings
 from refer.serializers import *
 import netifaces 
+import requests
 import socket
 
 # Create your views here.
@@ -53,20 +54,28 @@ def signup_view(request,*args, **kwargs):
             m.save()
 
         xyz = Profile.objects.latest('id')
-        print(xyz)
-        interface = netifaces.interfaces()
-        print(interface)
-        int = interface[1]
-        addrs = netifaces.ifaddresses(int)
-        x = addrs.get(10)
-        global_add = x[0].get('addr')
-        print(global_add)
-        link_local = x[2].get('addr')
-        link_local = link_local.replace("%enp8s0","" )
-        print(link_local)
-        final_add = global_add +":"+ link_local
-        xyz.ip = final_add 
-        xyz.save()
+        try:
+            fin = requests.get("https://api6.ipify.org", timeout=5).text
+            xyz.ip = fin
+            xyz.save()
+        except requests.exceptions.ConnectionError as ex:
+            print(None)
+
+        # xyz = Profile.objects.latest('id')
+        # print(xyz)
+        # interface = netifaces.interfaces()
+        # print(interface)
+        # int = interface[1]
+        # addrs = netifaces.ifaddresses(int)
+        # x = addrs.get(10)
+        # global_add = x[0].get('addr')
+        # print(global_add)
+        # link_local = x[2].get('addr')
+        # link_local = link_local.replace("%enp8s0","" )
+        # print(link_local)
+        # final_add = global_add +":"+ link_local
+        # xyz.ip = final_add 
+        # xyz.save()
 
             
             
